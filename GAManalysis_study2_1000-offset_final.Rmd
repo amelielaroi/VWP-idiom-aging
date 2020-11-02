@@ -1,0 +1,627 @@
+---
+title: "GAManalysis_study2_1000-offset_final"
+author: "Amélie la Roi"
+date: "19 juli 2018"
+output: html_document
+---
+
+Last update: November 2, 2020
+
+
+This document contains the analysis of the data of study 2. This study consists of an eye-tracking experiment with a visual world paradigm. The screen was divided into four quadrants. In each trial, two of the trials contained a picture, while the other two quadrants remained empty. The dependent variable in the study is the proportion of looks to the target picture displaying the figurative meaning of an idiom. The figurative picture was shown together with a picture displaying the literal meaning of the idiom (competitor condition) or with a picture only including the last noun of the idiom, used in a situation that is unrelated to both the figurative and literal meaning of the idiom.
+
+
+### Install and load packages
+```{r install packages, eval=FALSE, warning='hide'}
+library(devtools)
+library(itsadug)
+library(mgcv)
+library(sp)
+
+```
+
+### Load data
+```{r load data}
+
+print(load(paste("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Data_no delay/YoungOld/Preprocessed/preprocessed_final.rdat")))
+
+head(preprocessed_final)
+dim(preprocessed_final) # more than 10000 datapoints, so use bam()
+```
+
+### Prepare data for model fitting
+```{r prepare data}
+# Check data
+str(preprocessed_final)
+summary(preprocessed_final)
+
+# Make sure Participant, Condition, and IdiomType are factors
+preprocessed_final$Participant <- as.factor(as.character(preprocessed_final$Participant))
+preprocessed_final$Condition <- as.factor(preprocessed_final$Condition)
+preprocessed_final$IdiomType <- as.factor(preprocessed_final$IdiomType)
+preprocessed_final$Item <- as.factor(as.character(preprocessed_final$Item))
+
+# Check contrasts
+contrasts(preprocessed_final$Group)
+preprocessed_final$Group <- relevel(preprocessed_final$Group, ref="younger adults")
+contrasts(preprocessed_final$Group) # younger adults are reference level
+
+contrasts(preprocessed_final$Condition)
+preprocessed_final$Condition <- relevel(preprocessed_final$Condition, ref="distractor")
+contrasts(preprocessed_final$Condition) # distractor is reference level
+
+contrasts(preprocessed_final$IdiomType)
+preprocessed_final$IdiomType <- relevel(preprocessed_final$IdiomType, ref="two-noun")
+contrasts(preprocessed_final$IdiomType) # short idioms are reference level
+
+
+# Check data again
+str(preprocessed_final)
+
+# Only select data starting from 1000 ms after sentence onset
+sort(unique(preprocessed_final$Timebin))
+exp1000 <- droplevels(preprocessed_final[preprocessed_final$Timebin >= 1000,])
+sort(unique(exp1000$Timebin))
+
+# Create Event variable
+## Create interaction variable between Condition and IdiomType
+exp1000$Event <- interaction(exp1000$Participant, exp1000$Item, drop=TRUE)
+
+# # Log-transform proportions
+# exp$LogTargetProp <- log(exp$TargetProp)
+
+# Create start event column
+exp1000 <- start_event(exp1000, column="Timebin", event="Event")
+
+# Create counts
+exp1000$Counts <- cbind(Target=exp1000$TargetgazeSum, Other=exp1000$DistgazeSum)
+
+# Create interaction variables
+exp1000$GroupCond <- interaction(exp1000$Group, exp1000$Condition, drop=TRUE) # interaction between Group and Condition
+exp1000$GroupType <- interaction(exp1000$Group, exp1000$IdiomType) # creates four reference levels for the four possible combinations of Group and IdiomType
+exp1000$GroupCondType <- interaction(exp1000$Group, exp1000$Condition, exp1000$IdiomType, drop=TRUE) # interaction between Group, Condition, and IdiomType
+
+# Center scores on Stroop, Dual task, and SART
+exp1000$SartError_scale <- scale(exp1000$SartError, center=T, scale=T)
+exp1000$Stroop_scale <- scale(exp1000$Stroop, center=T, scale=T)
+exp1000$DualScore_scale <- scale(exp1000$DualScore, center=T, scale=T)
+
+# Create binary predictors
+## For Group factor
+exp1000$IsOld <- ifelse(exp1000$Group=="elderly adults", 1, 0)
+exp1000$IsYoung <- ifelse(exp1000$Group=="younger adults", 1, 0)
+
+## For Condition factor
+exp1000$IsComp <- ifelse(exp1000$Condition=="competitor", 1, 0)
+exp1000$IsDist <- ifelse(exp1000$Condition=="distractor", 1, 0)
+
+## For IdiomType facor
+exp1000$IsTwo <- ifelse(exp1000$IdiomType=="two-noun", 1, 0)
+exp1000$IsThree <- ifelse(exp1000$IdiomType=="three-noun", 1, 0)
+
+# Create interaction variable between Group and Condition
+exp1000$IsYoungComp <- (exp1000$Group=="younger adults" & exp1000$Condition=="competitor")*1
+exp1000$IsOldComp <- (exp1000$Group=="elderly adults" & exp1000$Condition=="competitor")*1
+
+
+exp1000$IsOldThree <- (exp1000$Group=="elderly adults" & exp1000$IdiomType=="three-noun")*1
+
+# Binary predictors for full model including Idiom type
+exp1000$IsCompTwo <- (exp1000$Condition=="competitor" & exp1000$IdiomType=="two-noun")*1 # difference distractor vs. competitor for two-noun idioms in younger adults
+
+exp1000$IsCompThree <- (exp1000$Condition=="competitor" & exp1000$IdiomType=="three-noun")*1 # difference distractor vs. competitor for three-noun idioms in younger adults
+
+exp1000$IsYoungCompTwo <- (exp1000$Group=="younger adults" &exp1000$Condition=="competitor" & exp1000$IdiomType=="two-noun")*1 # difference distractor vs. competitor for two-noun idioms in elderly adults
+
+exp1000$IsYoungCompThree <- (exp1000$Group=="younger adults" &exp1000$Condition=="competitor" & exp1000$IdiomType=="three-noun")*1 # difference distractor vs. competitor for three-noun idioms in elderly adults
+
+exp1000$IsOldCompTwo <- (exp1000$Group=="elderly adults" &exp1000$Condition=="competitor" & exp1000$IdiomType=="two-noun")*1 # difference distractor vs. competitor for two-noun idioms in elderly adults
+
+exp1000$IsOldCompThree <- (exp1000$Group=="elderly adults" &exp1000$Condition=="competitor" & exp1000$IdiomType=="three-noun")*1 # difference distractor vs. competitor for three-noun idioms in elderly adults
+
+# Save data for use in Peregrine
+save(exp1000, file = "G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Data_no delay/YoungOld/Preprocessed/exp1000.rdat" )
+
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Data_no delay/YoungOld/Preprocessed/exp1000.rdat"))
+
+```
+
+
+## Model fitting on counts
+### Factor model
+```{r}
+# Basic model without rho value
+m0 <- bam(Counts ~ GroupCond + s(Timebin, by=GroupCond) 
+             + s(Timebin, Participant, bs="fs", m=1)
+             + s(Timebin, Item, bs="fs", m=1)
+             + s(Event, bs="re"),
+             data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m0.rda"))
+
+# Model summary
+(m0_sum <- summary(m0, re.test=FALSE)) # 45.2% explained deviance
+
+# Check fit of the model
+gam.check(m0) # k's should be increased
+acf_resid(m0) # there's autocorrelation, but binomial models can't include rho value
+
+
+# Plot smooths per condition
+plot_smooth(m0, view="Timebin", plot_all="GroupCond", rug=F, shade=T)
+
+plot_smooth(m0, view="Timebin", cond=list(GroupCond=c("younger adults.distractor", "younger adults.competitor")))
+
+plot_diff(m0, view="Timebin", comp=list(GroupCond=c("younger adults.distractor", "younger adults.competitor")), shade=T, n.grid=200)
+
+plot_diff(m0, view="Timebin", comp=list(GroupCond=c("elderly adults.distractor", "elderly adults.competitor")), shade=T)
+
+```
+
+
+## Binary model
+### Averaged over two-word and three-word idioms
+```{r}
+# Binary model without rho value
+## Fit difference between competitor and distractor condition separately for younger adults and elderly adults
+m0bin <- bam(Counts ~ Group + s(Timebin, by=Group) 
+                + s(Timebin, by=IsYoungComp) # models the difference distractor vs. competitor condition for younger adults
+                + s(Timebin, by=IsOldComp) # models the difference distractor vs. competitor condition for elderly adults
+                + s(Timebin, Participant, bs="fs", m=1)
+                + s(Timebin, Item, bs="fs", m=1)
+                + s(Event, bs="re"),
+                data=exp1000, discrete=TRUE, family="binomial")
+
+# Explanation model terms:
+## Younger adults - distractor: s(Timebin): GroupYounger adults
+## Younger adults - competitor: s(Timebin): GroupYounger adults + s(Timebin, by=IsYoungComp)
+## Elderly adults - distractor: s(Timebin): GroupElderly adults
+## Elderly adults - competitor: s(Timebin): GroupElderly adults + s(Timebin, by=IsOldComp)
+
+### s(Timebin, by=IsYoungComp) models the difference distractor vs. competitor for younger adults
+### s(Timebin, by=IsOldComp) models the difference distractor vs. competitor for elderly adults
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m0bin.rda"))
+
+# Model summary
+(m0bin_sum <- summary(m0bin, re.test=FALSE)) # 45.2% explained variance
+                                             # Significant difference between condition for both younger and elderly adults
+# Check autocorrelation
+acf_resid(m0bin) # There's autocorrelation, but binary models can't account for autocorrelation
+
+```
+
+## Plot binary model
+```{r}
+par(mfrow=c(1,2))
+# Plot smooth per condition for younger adults
+## Distractor condition
+plot_smooth(m0bin, view="Timebin", cond=list(IsYoungComp=0, Group="younger adults"), rm.ranef=TRUE, n.grid=100, main="Younger adults\nDistractor vs. Competitor", col='blue', ylim=c(-2,6))
+## Competitor condition
+plot_smooth(m0bin, view="Timebin", cond=list(IsYoungComp=1, Group="younger adults"), rm.ranef=TRUE, n.grid=100, col='red', add=T)
+
+# Plot smooth per condition for elderly adults
+## Distractor condition
+plot_smooth(m0bin, view="Timebin", cond=list(IsOldComp=0, Group="elderly adults"), rm.ranef=TRUE, n.grid=100, main="Elderly adults\nDistractor vs. Competitor", col='blue', ylim=c(-2,6))
+## Competitor condition
+plot_smooth(m0bin, view="Timebin", cond=list(IsOldComp=1, Group="elderly adults"), rm.ranef=TRUE, n.grid=100, col='red', add=T)
+
+# Add legend
+gfc <- getFigCoords() # add legend
+legend(gfc[2], gfc[4], legend = c("distractor","competitor"), text.col = c("blue","red"), text.font = 2, xjust = 1, yjust = 1 , bty = "n", xpd = TRUE)
+
+# Plot difference between distractor and competitor condition for younger and elderly adults
+## Younger adults
+plot_diff(m0bin, view="Timebin", comp=list(IsYoungComp=c(1,0)), cond=list(Group="younger adults"), rm.ranef=T, main="Difference distractor vs. competitor\nYounger adults", ylim=c(-2,2)) # difference between conditions ends at 1260 ms
+## Elderly adults
+plot_diff(m0bin, view="Timebin", comp=list(IsOldComp=c(1,0)), cond=list(Group="elderly adults"), rm.ranef=T, main="Difference distractor vs. competitor\nElderly adults", ylim=c(-2,2)) # difference between conditions ends at 1700 ms
+
+# Y-axis
+## count = 0: 50% looking at target picture, 50% looking at distractor picture
+## count = 25: 100% looking at target picture
+## count = -25: 100% looking at distractor picture
+```
+
+
+### Fit binary model that directly models the in contrast distractor vs. competitor between younger and elderly adults (interaction effect)
+```{r}
+# Model without rho
+m1bin <- bam(Counts ~ Group + 
+                     + s(Timebin, by=Group) # models the smooth for the reference level younger adults - distractor
+                   + s(Timebin, by=IsComp) # models the difference distractor vs. competitor condition for younger adults
+                   + s(Timebin, by=IsOldComp) # models the difference distractor vs. competitor condition for elderly adults
+                   + s(Timebin, Participant, bs="fs", m=1)
+                   + s(Timebin, Item, bs="fs", m=1)
+                   + s(Event, bs="re"),
+                   data=exp1000, discrete=TRUE, family="binomial")
+
+
+## Younger adults - distractor condition: s(Timebin):GroupYounger adults
+## Younger adults - competitor condition: s(Timebin):GroupYounger adults + s(Timebin, by=IsComp)
+## Elderly adults - distractor condition: s(Timebin):GroupElderly adults
+## Elderly adults - competitor condition: s(Timebin):GroupElderly adults + s(Timebin, by=IsComp) + s(Timebin, by=IsOldComp) 
+
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m1bin.rda"))
+
+# Model summary
+(m1bin_sum <- summary(m1bin, re.test=FALSE)) # 45.2 % explained deviance
+                                             # Significant interaction
+
+# Plot interaction smooth
+plot(m1bin, select=4, shade=T, ylim=c(-3,3), abline(h=0))
+
+# Check model fit
+gam.check(m1bin) # k's should be increased
+                 # But first we should add a predictor for Idiom type
+
+```
+
+
+## Fit binary model that includes idiom type
+```{r}
+# Fit model
+m2bin <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType)
+                  + s(Timebin, by=IsYoungCompTwo)
+                  + s(Timebin, by=IsYoungCompThree)
+                  + s(Timebin, by=IsOldCompTwo)
+                  + s(Timebin, by=IsOldCompThree)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m2bin.rda"))
+
+# Model summary
+(m2bin_sum <- summary(m2bin, re.test=FALSE)) #  45.4% explained deviance
+
+# Check model fit 
+gam.check(m2bin) # increase k 
+
+# Fit model with k=20
+m2bin20 <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType, k=20)
+                  + s(Timebin, by=IsYoungCompTwo, k=20)
+                  + s(Timebin, by=IsYoungCompThree, k=20)
+                  + s(Timebin, by=IsOldCompTwo, k=20)
+                  + s(Timebin, by=IsOldCompThree, k=20)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m2bin20.rda"))
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m2bin20_fullRE.rda"))
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m2bin20_ML.rda"))
+
+# Model summary
+(m2bin20_sum <- summary(m2bin20, re.test=TRUE)) #  45.4 % explained deviance--> THIS IS REPORTED IN PAPER (Table 2)
+(m2bin20_fullRE_sum <- summary(m2bin20_fullRE, re.test=FALSE)) # 93 % explained deviance
+(m2bin20_ML_sum <- summary(m2bin20_ML, re.test=FALSE))
+
+# Save model summary
+save(m2bin20_sum, file="G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m2bin20_sum.rda", compress='xz')
+
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m2bin20_sum.rda"))
+
+# Print model statistics
+m2bin20_stats <- report_stats(m2bin20)
+m2bin20_ML_stats <- report_stats(m2bin20_ML)
+
+# Save model statistics
+save(m2bin20_stats, file="G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m2bin20_stats.rda", compress='xz')
+
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m2bin20_stats.rda"))
+
+# Check model fit after increasing k 
+gam.check(m2bin20) # not much better, but k cannot be increased further due to limited number of unique value
+gam.check(m2bin20_ML) 
+```
+
+
+## Plot model with k=20
+```{r}
+# Y-axis
+## count = 0: 50% looking at target picture, 50% looking at distractor picture
+## count = 25: 100% looking at target picture
+## count= -25: 100% looking at distractor picture
+
+
+par(mfrow=c(2,2))
+
+# Younger adults - Two-word idioms
+##Distractor condition
+plot_smooth(m2bin20, view="Timebin", cond=list(IsYoungCompTwo=0, IsYoungCompThree=0, IsOldCompTwo=0, IsOldCompThree=0, GroupType="younger adults.two-noun"), rm.ranef=TRUE, n.grid=100, main="Younger adults (k=20)\nDistractor vs. Competitor\nTwo-word idioms", col='blue', ylim=c(-3,6), v=1189)
+## Competitor condition
+plot_smooth(m2bin20, view="Timebin", cond=list(IsYoungCompTwo=1, IsYoungCompThree=0, IsOldCompTwo=0, IsOldCompThree=0, GroupType="younger adults.two-noun"), rm.ranef=TRUE, n.grid=100, col='red', add=T)
+
+# Younger adults - Three-word idioms
+##Distractor condition
+plot_smooth(m2bin20, view="Timebin", cond=list(IsYoungCompTwo=0, IsYoungCompThree=0, IsOldCompTwo=0, IsOldCompThree=0, GroupType="younger adults.three-noun"), rm.ranef=TRUE, n.grid=100, main="Younger adults (k=20)\nDistractor vs. Competitor\nThree-word idioms", col='blue', ylim=c(-3,6), v=c(1010, 1663))
+## Competitor condition
+plot_smooth(m2bin20, view="Timebin", cond=list(IsYoungCompTwo=0, IsYoungCompThree=1, IsOldCompTwo=0, IsOldCompThree=0, GroupType="younger adults.three-noun"), rm.ranef=TRUE, n.grid=100, col='red', add=T)
+
+# Elderly adults - Two-word idioms
+##Distractor condition
+plot_smooth(m2bin20, view="Timebin", cond=list(IsYoungCompTwo=0, IsYoungCompThree=0, IsOldCompTwo=0, IsOldCompThree=0, GroupType="elderly adults.two-noun"), rm.ranef=TRUE, n.grid=100, main="Elderly adults (k=20)\nDistractor vs. Competitor\nTwo-word idioms", col='blue', ylim=c(-3,6), v=1189)
+## Competitor condition
+plot_smooth(m2bin20, view="Timebin", cond=list(IsYoungCompTwo=0, IsYoungCompThree=0, IsOldCompTwo=1, IsOldCompThree=0, GroupType="elderly adults.two-noun"), rm.ranef=TRUE, n.grid=100, col='red', add=T)
+
+# Elderly adults - Three-word idioms
+##Distractor condition
+plot_smooth(m2bin20, view="Timebin", cond=list(IsYoungCompTwo=0, IsYoungCompThree=0, IsOldCompTwo=0, IsOldCompThree=0, GroupType="elderly adults.three-noun"), rm.ranef=TRUE, n.grid=100, main="Elderly adults (k=20)\nDistractor vs. Competitor\nThree-word idioms", col='blue', ylim=c(-3,6), v=c(1010, 1663))
+## Competitor condition
+plot_smooth(m2bin20, view="Timebin", cond=list(IsYoungCompTwo=0, IsYoungCompThree=0, IsOldCompTwo=0, IsOldCompThree=1, GroupType="elderly adults.three-noun"), rm.ranef=TRUE, n.grid=100, col='red', add=T)
+
+
+# Add legend
+gfc <- getFigCoords() # add legend
+legend(gfc[2], gfc[4], legend = c("distractor","competitor"), text.col = c("blue","red"), text.font = 2, 
+       xjust = 1, yjust = 1 , bty = "n", xpd = TRUE)
+
+
+# Plot difference between distractor and competitor condition per Group and Idiom Type
+par(mfrow=c(2,2))
+## Younger adults - Two-word idioms
+plot_diff(m2bin20, view="Timebin", comp=list(IsYoungCompTwo=c(1,0)), cond=list(GroupType="younger adults.two-noun", IsYoungCompThree=0, IsOldCompTwo=0, IsOldCompThree=0), rm.ranef=T, main="Younger adults (k=20)\nDifference distractor vs. Competitor\nTwo-word idioms", ylim=c(-5,5), v=1189)
+## Younger adults - Three-word idioms
+plot_diff(m2bin20, view="Timebin", comp=list(IsYoungCompThree=c(1,0)), cond=list(GroupType="younger adults.three-noun", IsYoungCompTwo=0, IsOldCompTwo=0, IsOldCompThree=0), rm.ranef=T, main="Younger adults (k=20)\nDifference distractor vs. Competitor\nThree-word idioms", ylim=c(-5,5), v=c(1010, 1663))
+
+## Elderly adults - Two-word idioms
+plot_diff(m2bin20, view="Timebin", comp=list(IsOldCompTwo=c(1,0)), cond=list(GroupType="elderly adults.two-noun", IsYoungCompTwo=0, IsYoungCompThree=0, IsOldCompThree=0), rm.ranef=T, main="Elderly adults (k=20)\nDifference distractor vs. Competitor\nTwo-word idioms", ylim=c(-5,5), v=1189)
+## Elderly adults - Three-word idioms
+plot_diff(m2bin20, view="Timebin", comp=list(IsOldCompThree=c(1,0)), cond=list(GroupType="elderly adults.three-noun", IsYoungCompTwo=0, IsYoungCompThree=0, IsOldCompTwo=0), rm.ranef=T, main="Elderly adults (k=20)\nDifference distractor vs. Competitor\nThree-word idioms", ylim=c(-5,5), v=c(1010, 1663))
+
+
+```
+
+
+### Fit binary model that includes idiom type and directly tests interaction Group x Condition
+```{r}
+# Fit model 
+m3bin <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType)
+                  + s(Timebin, by=IsCompTwo)
+                  + s(Timebin, by=IsCompThree)
+                  + s(Timebin, by=IsOldCompTwo)
+                  + s(Timebin, by=IsOldCompThree)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m3bin.rda"))
+
+# Model summary
+(m3bin_sum <- summary(m3bin, re.test=FALSE)) #  45.4 % explained deviance
+
+# Check model fit
+gam.check(m3bin) # k should be increased
+
+
+# Increase k to 20
+m3bin20 <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType, k=20)
+                  + s(Timebin, by=IsCompTwo, k=20)
+                  + s(Timebin, by=IsCompThree, k=20)
+                  + s(Timebin, by=IsOldCompTwo, k=20)
+                  + s(Timebin, by=IsOldCompThree, k=20)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m3bin20.rda"))
+
+# Model summary
+(m3bin20_sum <- summary(m3bin20, re.test=TRUE)) #  45.4 % explained deviance --> THIS IS REPORTED IN PAPER (Table 4)
+
+# Save model summary
+save(m3bin20_sum, file="G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m3bin20_sum.rda", compress='xz')
+
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m3bin20_sum.rda"))
+
+# Print model statistics
+m3bin20_stats <- report_stats(m3bin20)
+
+# Save model statistics
+save(m3bin20_stats, file="G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m3bin20_stats.rda", compress='xz')
+
+# Check model fit
+gam.check(m3bin20) # better! p-values are not very low anymore
+
+
+```
+
+
+## Add scores on cognitive tasks
+```{r}
+# Include scores on Stroop task, Dual task, and SART
+m4bin <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType, k=20)
+                  + s(Timebin, by=IsCompTwo, k=20)
+                  + s(Timebin, by=IsCompThree, k=20)
+                  + s(Timebin, by=IsOldCompTwo, k=20)
+                  + s(Timebin, by=IsOldCompThree, k=20)
+                  + s(SartError_scale)
+                  + s(Stroop_scale)
+                  + s(DualScore_scale)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4bin.rda"))
+
+# Model summary
+(m4bin_sum <- summary(m4bin, re.test=TRUE)) #  45.8% explained deviance; only Stroop significant
+
+# Save model summary
+save(m4bin_sum, file="G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4bin_sum.rda", compress='xz')
+
+# Print statistics
+m4bin_stats <- report_stats(m4bin)
+
+# Save statistics
+save(m4bin_stats, file="G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4bin_stats.rda", compress='xz')
+
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4bin_stats.rda"))
+
+# Remove score on SART
+m4abin <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType, k=20)
+                  + s(Timebin, by=IsCompTwo, k=20)
+                  + s(Timebin, by=IsCompThree, k=20)
+                  + s(Timebin, by=IsOldCompTwo, k=20)
+                  + s(Timebin, by=IsOldCompThree, k=20)
+                  + s(Stroop_scale)
+                  + s(DualScore_scale)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4abin.rda"))
+
+# Compare models
+compareML(m4bin, m4abin, suggest.report = TRUE) # THIS IS REPORTED IN PAPER
+
+# Remove score on Dual task
+m4bbin <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType, k=20)
+                  + s(Timebin, by=IsCompTwo, k=20)
+                  + s(Timebin, by=IsCompThree, k=20)
+                  + s(Timebin, by=IsOldCompTwo, k=20)
+                  + s(Timebin, by=IsOldCompThree, k=20)
+                  + s(Stroop_scale)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4bbin.rda"))
+
+# Compare models
+compareML(m4abin, m4bbin, suggest.report = TRUE) # THIS IS REPORTED IN PAPER
+
+# Compare models to check contribution of model fit Stroop
+compareML(m4bbin, m3bin20, suggest.report = TRUE) # THIS IS REPORTED IN THE PAPER
+
+# Test the effect of Stroop for the interaction between Group and IdiomType
+m4cbin <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType, k=20)
+                  + s(Timebin, by=IsCompTwo, k=20)
+                  + s(Timebin, by=IsCompThree, k=20)
+                  + s(Timebin, by=IsOldCompTwo, k=20)
+                  + s(Timebin, by=IsOldCompThree, k=20)
+                  + s(Stroop_scale, by=GroupType)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4cbin.rda"))
+
+# Model summary
+(m4cbin_sum <- summary(m4cbin, re.test=TRUE))
+
+# Save model summary
+save(m4cbin_sum, file="G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4cbin_sum.rda")
+
+
+# Test the effect of Stroop for the interaction between Group and Condition
+m4dbin <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType, k=20)
+                  + s(Timebin, by=IsCompTwo, k=20)
+                  + s(Timebin, by=IsCompThree, k=20)
+                  + s(Timebin, by=IsOldCompTwo, k=20)
+                  + s(Timebin, by=IsOldCompThree, k=20)
+                  + s(Stroop_scale, by=GroupCond)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4dbin.rda"))
+
+# Model summary
+(m4dbin_sum <- summary(m4dbin, re.test=TRUE))
+
+# Test the effect of Stroop for the difference between conditions
+m4ebin <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType, k=20)
+                  + s(Timebin, by=IsCompTwo, k=20)
+                  + s(Timebin, by=IsCompThree, k=20)
+                  + s(Timebin, by=IsOldCompTwo, k=20)
+                  + s(Timebin, by=IsOldCompThree, k=20)
+                  + s(Stroop_scale, by=IsCompTwo)
+                  + s(Stroop_scale, by=IsCompThree)
+                  + s(Stroop_scale, by=IsOldCompTwo)
+                  + s(Stroop_scale, by=IsOldCompThree)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4ebin.rda"))
+
+# Model summary
+(m4ebin_sum <- summary(m4ebin, re.test=FALSE))
+
+# Print statistics
+m4ebin_stats <- report_stats(m4ebin)
+
+# Save statistics
+save(m4ebin_stats, file="G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m4ebin_stats.rda", compress='xz')
+```
+
+
+
+## Test the effect of idiom literality
+```{r}
+# Fit model
+m5bin <- bam(Counts ~ GroupType
+                  + s(Timebin, by=GroupType, k=20)
+                  + s(Timebin, by=IsCompTwo, k=20)
+                  + s(Timebin, by=IsCompThree, k=20)
+                  + s(Timebin, by=IsOldCompTwo, k=20)
+                  + s(Timebin, by=IsOldCompThree, k=20)
+                  + s(Stroop_scale)
+                  + s(Literality)
+                  + s(Timebin, Participant, bs="fs", m=1)
+                  + s(Timebin, Item, bs="fs", m=1)
+                  + s(Event, bs="re"),
+                  data=exp1000, discrete=TRUE, family="binomial")
+
+# Load model after running in Peregrine
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m5bin.rda"))
+
+
+# Compare models
+compareML(m5bin, m4bbin, suggest.report = TRUE) # THIS IS REPORTED IN THE PAPER
+
+# Print statistics
+m5bin_stats <- report_stats(m5bin)
+
+# Save statistics
+save(m5bin_stats, file="G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m5bin_stats.rda", compress='xz')
+
+print(load("G:/Back-up Y-schijf 12.03.2020/Study 2 - Eye tracking + AD/Analysis/Models/m5bin_stats.rda"))
+
+```` 
+
