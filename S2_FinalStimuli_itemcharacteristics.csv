@@ -1,0 +1,129 @@
+﻿List;Item;ItemType;Sentence;Familiarity_young;Familiarity_old;Literality;CondTarget;CondOther;IdiomType;Timing_verb;Timing_noun_mid;Timing_noun_last;SentLength
+1;1;experimental;Toen bevond hij zich in het hol van de leeuw.;4,56;4,82;3,90;figuurlijk;letterlijk;three-noun;270;1469;1960;2385
+2;1;experimental;Toen bevond hij zich in het hol van de leeuw.;4,56;4,82;3,90;figuurlijk;ongerelateerd;three-noun;270;1469;1960;2385
+1;2;experimental;Toen bracht zij hem het hoofd op hol.;4,50;4,89;1,57;figuurlijk;letterlijk;three-noun;263;1135;1573;1945
+2;2;experimental;Toen bracht zij hem het hoofd op hol.;4,50;4,89;1,57;figuurlijk;ongerelateerd;three-noun;263;1135;1573;1945
+1;3;experimental;Toen deed hij het in zijn broek.;4,92;4,89;4,96;figuurlijk;letterlijk;two-noun;257;NA;1285;1609
+2;3;experimental;Toen deed hij het in zijn broek.;4,92;4,89;4,96;figuurlijk;ongerelateerd;two-noun;257;NA;1285;1609
+1;4;experimental;Toen ging ze door de grond.;4,37;5,00;2,19;figuurlijk;letterlijk;two-noun;206;NA;979;1489
+2;4;experimental;Toen ging ze door de grond.;4,37;5,00;2,19;figuurlijk;ongerelateerd;two-noun;206;NA;979;1489
+1;5;experimental;Toen ging hij door het lint.;4,95;5,00;4,35;figuurlijk;letterlijk;two-noun;220;NA;1142;1553
+2;5;experimental;Toen ging hij door het lint.;4,95;5,00;4,35;figuurlijk;ongerelateerd;two-noun;220;NA;1142;1553
+1;6;experimental;Toen ging hij uit zijn dak.;4,82;5,00;2,51;figuurlijk;letterlijk;two-noun;225;NA;1194;1462
+2;6;experimental;Toen ging hij uit zijn dak.;4,82;5,00;2,51;figuurlijk;ongerelateerd;two-noun;225;NA;1194;1462
+1;7;experimental;Toen gooide ze de handdoek in de ring.;4,72;4,85;4,65;figuurlijk;letterlijk;three-noun;262;954;1708;2058
+2;7;experimental;Toen gooide ze de handdoek in de ring.;4,72;4,85;4,65;figuurlijk;ongerelateerd;three-noun;262;954;1708;2058
+1;8;experimental;Toen gooide ze het geld over de balk.;4,62;4,91;4,55;figuurlijk;letterlijk;three-noun;256;982;1893;2324
+2;8;experimental;Toen gooide ze het geld over de balk.;4,62;4,91;4,55;figuurlijk;ongerelateerd;three-noun;256;982;1893;2324
+1;9;experimental;Toen had hij een appeltje voor de dorst.;4,69;4,91;4,18;figuurlijk;letterlijk;three-noun;250;823;1726;2207
+2;9;experimental;Toen had hij een appeltje voor de dorst.;4,69;4,91;4,18;figuurlijk;ongerelateerd;three-noun;250;823;1726;2207
+1;10;experimental;Toen had hij een gat in zijn hand.;4,74;4,87;3,41;figuurlijk;letterlijk;three-noun;256;793;1448;1851
+2;10;experimental;Toen had hij een gat in zijn hand.;4,74;4,87;3,41;figuurlijk;ongerelateerd;three-noun;256;793;1448;1851
+1;11;experimental;Toen had hij vlinders in zijn buik.;5,00;5,00;1,83;figuurlijk;letterlijk;three-noun;200;550;1484;1909
+2;11;experimental;Toen had hij vlinders in zijn buik.;5,00;5,00;1,83;figuurlijk;ongerelateerd;three-noun;200;550;1484;1909
+1;12;experimental;Toen hield ze een oogje in het zeil.;4,95;4,85;2,40;figuurlijk;letterlijk;three-noun;300;991;1726;2172
+2;12;experimental;Toen hield ze een oogje in het zeil.;4,95;4,85;2,40;figuurlijk;ongerelateerd;three-noun;300;991;1726;2172
+1;13;experimental;Toen hield ze hen in de gaten.;4,86;5,00;2,62;figuurlijk;letterlijk;two-noun;213;NA;1183;1845
+2;13;experimental;Toen hield ze hen in de gaten.;4,86;5,00;2,62;figuurlijk;ongerelateerd;two-noun;213;NA;1183;1845
+1;14;experimental;Toen joeg hij haar op de kast.;4,82;5,00;3,92;figuurlijk;letterlijk;two-noun;409;NA;1482;2237
+2;14;experimental;Toen joeg hij haar op de kast.;4,82;5,00;3,92;figuurlijk;ongerelateerd;two-noun;409;NA;1482;2237
+1;15;experimental;Toen keek hij de kat uit de boom.;4,92;4,88;2,64;figuurlijk;letterlijk;three-noun;285;896;1429;1808
+2;15;experimental;Toen keek hij de kat uit de boom.;4,92;4,88;2,64;figuurlijk;ongerelateerd;three-noun;285;896;1429;1808
+1;16;experimental;Toen kletste ze hem de oren van het hoofd.;4,88;4,88;1,38;figuurlijk;letterlijk;three-noun;338;1350;1964;2463
+2;16;experimental;Toen kletste ze hem de oren van het hoofd.;4,88;4,88;1,38;figuurlijk;ongerelateerd;three-noun;338;1350;1964;2463
+1;17;experimental;Toen knoopte hij het in zijn oren.;4,96;4,85;1,43;figuurlijk;letterlijk;two-noun;297;NA;1508;2070
+2;17;experimental;Toen knoopte hij het in zijn oren.;4,96;4,85;1,43;figuurlijk;ongerelateerd;two-noun;297;NA;1508;2070
+1;18;experimental;Toen kroop ze door het oog van de naald.;4,75;4,84;1,55;figuurlijk;letterlijk;three-noun;321;1248;1807;2324
+2;18;experimental;Toen kroop ze door het oog van de naald.;4,75;4,84;1,55;figuurlijk;ongerelateerd;three-noun;321;1248;1807;2324
+1;19;experimental;Toen kroop hij onder de wol.;4,79;4,78;4,62;figuurlijk;letterlijk;two-noun;250;NA;1250;1657
+2;19;experimental;Toen kroop hij onder de wol.;4,79;4,78;4,62;figuurlijk;ongerelateerd;two-noun;250;NA;1250;1657
+1;20;experimental;Toen lag hij in een deuk.;5,00;4,90;2,13;figuurlijk;letterlijk;two-noun;273;NA;1112;1606
+2;20;experimental;Toen lag hij in een deuk.;5,00;4,90;2,13;figuurlijk;ongerelateerd;two-noun;273;NA;1112;1606
+1;21;experimental;Toen legde hij haar in de watten.;4,86;5,00;4,07;figuurlijk;ongerelateerd;two-noun;325;NA;1650;2208
+2;21;experimental;Toen legde hij haar in de watten.;4,86;5,00;4,07;figuurlijk;letterlijk;two-noun;325;NA;1650;2208
+1;22;experimental;Toen liep haar het water in de mond.;4,93;4,89;4,44;figuurlijk;ongerelateerd;three-noun;251;845;1393;1855
+2;22;experimental;Toen liep haar het water in de mond.;4,93;4,89;4,44;figuurlijk;letterlijk;three-noun;251;845;1393;1855
+1;23;experimental;Toen liep hij naast zijn schoenen.;4,68;4,90;3,46;figuurlijk;ongerelateerd;two-noun;231;NA;1141;1696
+2;23;experimental;Toen liep hij naast zijn schoenen.;4,68;4,90;3,46;figuurlijk;letterlijk;two-noun;231;NA;1141;1696
+1;24;experimental;Toen liep hij tegen de lamp.;4,58;4,85;4,87;figuurlijk;ongerelateerd;two-noun;238;NA;1194;1743
+2;24;experimental;Toen liep hij tegen de lamp.;4,58;4,85;4,87;figuurlijk;letterlijk;two-noun;238;NA;1194;1743
+1;25;experimental;Toen maakte zij van een mug een olifant.;4,88;4,90;1,18;figuurlijk;ongerelateerd;three-noun;245;1270;1726;2450
+2;25;experimental;Toen maakte zij van een mug een olifant.;4,88;4,90;1,18;figuurlijk;letterlijk;three-noun;245;1270;1726;2450
+1;26;experimental;Toen schoot hij uit zijn slof.;4,74;4,85;3,44;figuurlijk;ongerelateerd;two-noun;194;NA;1161;1683
+2;26;experimental;Toen schoot hij uit zijn slof.;4,74;4,85;3,44;figuurlijk;letterlijk;two-noun;194;NA;1161;1683
+1;27;experimental;Toen sloeg hij haar aan de haak.;4,82;5,00;3,39;figuurlijk;ongerelateerd;two-noun;190;NA;1296;1780
+2;27;experimental;Toen sloeg hij haar aan de haak.;4,82;5,00;3,39;figuurlijk;letterlijk;two-noun;190;NA;1296;1780
+1;28;experimental;Toen speelde ze de sterren van de hemel.;4,90;4,90;1,19;figuurlijk;ongerelateerd;three-noun;205;1016;1812;2312
+2;28;experimental;Toen speelde ze de sterren van de hemel.;4,90;4,90;1,19;figuurlijk;letterlijk;three-noun;205;1016;1812;2312
+1;29;experimental;Toen stak hij de handen uit de mouwen.;4,89;5,00;4,82;figuurlijk;ongerelateerd;three-noun;204;808;1440;2037
+2;29;experimental;Toen stak hij de handen uit de mouwen.;4,89;5,00;4,82;figuurlijk;letterlijk;three-noun;204;808;1440;2037
+1;30;experimental;Toen stond ze in vuur en vlam.;4,79;4,89;3,87;figuurlijk;ongerelateerd;three-noun;219;817;1375;1822
+2;30;experimental;Toen stond ze in vuur en vlam.;4,79;4,89;3,87;figuurlijk;letterlijk;three-noun;219;817;1375;1822
+1;31;experimental;Toen stond hij in zijn hemd.;4,13;4,74;4,85;figuurlijk;ongerelateerd;two-noun;200;NA;1124;1584
+2;31;experimental;Toen stond hij in zijn hemd.;4,13;4,74;4,85;figuurlijk;letterlijk;two-noun;200;NA;1124;1584
+1;32;experimental;Toen tastte ze in het duister.;4,73;5,00;4,36;figuurlijk;ongerelateerd;two-noun;338;NA;1247;1831
+2;32;experimental;Toen tastte ze in het duister.;4,73;5,00;4,36;figuurlijk;letterlijk;two-noun;338;NA;1247;1831
+1;33;experimental;Toen viel hij door de mand.;5,00;5,00;3,45;figuurlijk;ongerelateerd;two-noun;193;NA;984;1508
+2;33;experimental;Toen viel hij door de mand.;5,00;5,00;3,45;figuurlijk;letterlijk;two-noun;193;NA;984;1508
+1;34;experimental;Toen voelde hij hem aan de tand.;4,45;4,80;4,40;figuurlijk;ongerelateerd;two-noun;212;NA;1459;1934
+2;34;experimental;Toen voelde hij hem aan de tand.;4,45;4,80;4,40;figuurlijk;letterlijk;two-noun;212;NA;1459;1934
+1;35;experimental;Toen was hij met zijn hoofd in de wolken.;4,90;4,86;2,81;figuurlijk;ongerelateerd;three-noun;207;935;1500;2045
+2;35;experimental;Toen was hij met zijn hoofd in de wolken.;4,90;4,86;2,81;figuurlijk;letterlijk;three-noun;207;935;1500;2045
+1;36;experimental;Toen zat ze bij de pakken neer.;4,68;5,00;3,22;figuurlijk;ongerelateerd;two-noun;220;NA;948;1680
+2;36;experimental;Toen zat ze bij de pakken neer.;4,68;5,00;3,22;figuurlijk;letterlijk;two-noun;220;NA;948;1680
+1;37;experimental;Toen zat hij hem op de hielen.;4,82;4,90;3,13;figuurlijk;ongerelateerd;two-noun;231;NA;1175;1643
+2;37;experimental;Toen zat hij hem op de hielen.;4,82;4,90;3,13;figuurlijk;letterlijk;two-noun;231;NA;1175;1643
+1;38;experimental;Toen zat hij in de put.;4,77;4,90;4,49;figuurlijk;ongerelateerd;two-noun;223;NA;973;1342
+2;38;experimental;Toen zat hij in de put.;4,77;4,90;4,49;figuurlijk;letterlijk;two-noun;223;NA;973;1342
+1;39;experimental;Toen zette hij haar in het zonnetje.;4,77;4,90;4,16;figuurlijk;ongerelateerd;two-noun;250;NA;1329;1970
+2;39;experimental;Toen zette hij haar in het zonnetje.;4,77;4,90;4,16;figuurlijk;letterlijk;two-noun;250;NA;1329;1970
+1;40;experimental;Toen zette zij hem op zijn nummer.;4,45;4,90;2,15;figuurlijk;ongerelateerd;two-noun;256;NA;1285;1804
+2;40;experimental;Toen zette zij hem op zijn nummer.;4,45;4,90;2,15;figuurlijk;letterlijk;two-noun;256;NA;1285;1804
+1;41;control;Toen voerde hij de ganzen.;;;;control;control;two-noun;208;NA;880;1550
+2;41;control;Toen verjaagde hij de ganzen.;;;;control;control;two-noun;294;NA;1327;1961
+1;42;control;Toen woog ze een tros bananen.;;;;control;control;two-noun;258;NA;1135;1735
+2;42;control;Toen pakte ze een tros bananen.;;;;control;control;two-noun;364;NA;1487;2122
+1;43;control;Toen smeerde hij een boterham.;;;;control;control;two-noun;230;NA;1157;1813
+2;43;control;Toen at hij een boterham.;;;;control;control;two-noun;248;NA;839;1495
+1;44;control;Toen vouwde hij de krant.;;;;control;control;two-noun;229;NA;982;1481
+2;44;control;Toen verscheurde hij de krant.;;;;control;control;two-noun;232;NA;1374;1961
+1;45;control;Toen betaalde ze de boodschappen.;;;;control;control;two-noun;260;NA;1060;1798
+2;45;control;Toen tilde ze de boodschappen.;;;;control;control;two-noun;417;NA;1144;1868
+1;46;control;Toen tekende ze een bloem.;;;;control;control;two-noun;320;NA;1110;1508
+2;46;control;Toen plukte ze een bloem.;;;;control;control;two-noun;346;NA;1098;1485
+1;47;control;Toen schreef hij een brief.;;;;control;control;two-noun;196;NA;1003;1479
+2;47;control;Toen las hij een brief.;;;;control;control;two-noun;236;NA;912;1367
+1;48;control;Toen poetste hij de schoen.;;;;control;control;two-noun;285;NA;923;1361
+2;48;control;Toen bekeek hij de schoen.;;;;control;control;two-noun;324;NA;1112;1565
+1;49;control;Toen dronk ze haar koffie.;;;;control;control;two-noun;308;NA;1033;1429
+2;49;control;Toen morste ze haar koffie.;;;;control;control;two-noun;275;NA;1173;1568
+1;50;control;Toen hakte hij het hout.;;;;control;control;two-noun;250;NA;1050;1590
+2;50;control;Toen stapelde hij het hout.;;;;control;control;two-noun;266;NA;1356;1820
+1;51;control;Toen boorde ze een gat.;;;;control;control;two-noun;370;NA;1066;1565
+2;51;control;Toen groef ze een gat.;;;;control;control;two-noun;255;NA;948;1446
+1;52;control;Toen ving hij het konijn.;;;;control;control;two-noun;275;NA;1012;1504
+2;52;control;Toen aaide hij het konijn.;;;;control;control;two-noun;346;NA;1210;1722
+1;53;control;Toen schminkte hij zijn gezicht.;;;;control;control;two-noun;272;NA;1191;1845
+2;53;control;Toen waste hij zijn gezicht.;;;;control;control;two-noun;276;NA;1182;1859
+1;54;control;Toen borstelde ze de hond.;;;;control;control;two-noun;373;NA;1320;1759
+2;54;control;Toen riep ze de hond.;;;;control;control;two-noun;233;NA;977;1460
+1;55;control;Toen gooide hij de bal.;;;;control;control;two-noun;225;NA;1091;1483
+2;55;control;Toen schopte hij de bal.;;;;control;control;two-noun;244;NA;1133;1428
+1;56;control;Toen sloopte hij de muur.;;;;control;control;two-noun;253;NA;1156;1691
+2;56;control;Toen verfde hij de muur.;;;;control;control;two-noun;230;NA;1094;1603
+1;57;control;Toen bakte ze de taart.;;;;control;control;two-noun;356;NA;1045;1594
+2;57;control;Toen sneed ze de taart.;;;;control;control;two-noun;231;NA;1044;1535
+1;58;control;Toen vulde hij zijn glas.;;;;control;control;two-noun;249;NA;1066;1610
+2;58;control;Toen leegde hij zijn glas.;;;;control;control;two-noun;251;NA;1111;1687
+1;59;control;Toen knipte ze haar haren.;;;;control;control;two-noun;354;NA;1295;1981
+2;59;control;Toen vlocht ze haar haren.;;;;control;control;two-noun;227;NA;1028;1660
+1;60;control;Toen kuste hij zijn vrouw.;;;;control;control;two-noun;398;NA;1209;1688
+2;60;control;Toen belde hij zijn vrouw.;;;;control;control;two-noun;334;NA;1127;1638
+1;61;practice;Toen stak zij hem een hart onder de riem.;;;;figuurlijk;letterlijk;three-noun;201;1000;1729;2104
+2;61;practice;Toen stak zij hem een hart onder de riem.;;;;figuurlijk;ongerelateerd;three-noun;201;1000;1729;2104
+1;62;practice;Toen hield zij hem onder de duim.;;;;figuurlijk;letterlijk;two-noun;216;NA;1370;1757
+2;62;practice;Toen hield zij hem onder de duim.;;;;figuurlijk;ongerelateerd;two-noun;216;NA;1370;1757
+1;63;practice;Toen droeg ze een sjaal.;;;;practice;practice;two-noun;321;NA;919;1388
+2;63;practice;Toen breidde ze een sjaal.;;;;practice;practice;two-noun;352;NA;1224;1844
+1;64;practice;Toen stofzuigde hij de vloer.;;;;practice;practice;two-noun;221;NA;1321;1785
+2;64;practice;Toen veegde hij de vloer.;;;;practice;practice;two-noun;306;NA;1116;1637
